@@ -1,73 +1,100 @@
-# React + TypeScript + Vite
+# 🌐 Frontend Low-Level Design (LLD) Learning Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive learning platform designed to help developers master **Low-Level Design (LLD)** concepts, design patterns, and engineering challenges in frontend development. Built using **React, TypeScript, CSS**, and styled with a cyberpunk dark glassmorphism aesthetic.
 
-Currently, two official plugins are available:
+🔗 **Live Portal:** [gopal0208.github.io/frontend-lld](https://gopal0208.github.io/frontend-lld/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. 🧩 Design Patterns Catalogue
+Isolated, single-responsibility explanations of core structural and behavioral design patterns:
+* **Singleton**: Single instances like global stores or notification queues.
+* **Observer**: Reactive communication between objects.
+* **Pub-Sub**: Loose-coupled message brokers.
+* Features includes UML ASCII block diagrams, design intent, when-to-use lists, advantages/disadvantages, and dynamic code playgrounds.
 
-## Expanding the ESLint configuration
+### 2. 🎮 Interactive Design Challenges
+Real-world widget simulations showing design patterns in production code:
+* **Autocomplete (Typeahead) Search**: Demonstrates debouncing, caching, and `AbortController` cancellation.
+* **Toast Notification Manager**: Demonstrates Singleton queues, Observer patterns, and UI transitions.
+* **Recursive Comments Thread**: Nested states and operations at arbitrary depth.
+* **Drag-and-Drop Kanban Board**: Custom HTML5 drag & drop implementation with column state transfers.
+* **File Explorer Directory**: Interactive folder tree structures (CRUD operations).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 3. 🛠️ Creator Studio (Developer-Only Mode)
+An interactive in-app builder deck to configure and author new studies programmatically:
+* Direct integration with the **Imgur Image Upload API** for linking structural diagrams without repo bloat.
+* Real-time validation, Base64 backup, and one-click JSON config generator.
+* Built-in support for embedding external **CodeSandbox / StackBlitz** URLs.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack & Directory Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+├── .github/workflows/   # Automatic GitHub Pages CI/CD Actions
+├── public/
+│   ├── lld_database.json # Dynamic database catalog shell (JSON)
+├── src/
+│   ├── components/      # Core visual elements (Sidebar, CreatorStudio, VideoPlayer)
+│   ├── concepts/        # Sub-widgets for interactive challenges
+│   ├── patterns/        # Files for design patterns
+│   └── styles/          # HSL design tokens, global resets, main glassmorphism
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+* **Core**: React 19, TypeScript, Vite.
+* **Styling**: Pure CSS (Variable design tokens, grid & flex layouts).
+* **Icons**: Lucide Icons.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📦 Getting Started
+
+### Prerequisites
+* **Node.js** (v20+ recommended)
+* **NPM** (v10+ recommended)
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gopal0208/frontend-lld.git
+   cd frontend-lld
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server locally:
+   ```bash
+   npm run dev
+   ```
+4. Build the production bundle:
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 🔑 Administrative Operations & Content Authoring
+
+To prevent regular visitors from seeing developer controls, both **Creator Studio** and **Clear Storage** header buttons are hidden by default.
+
+### Enable Creator Studio
+Open the browser Developer Tools Console (`F12`) on the hosted page and run:
+* **Open the Studio Modal directly**:
+  ```javascript
+  openStudio()
+  ```
+* **Toggle persistent header buttons (Saved in LocalStorage)**:
+  ```javascript
+  enableStudio(true) // Pass false to hide again
+  ```
+* **URL Parameter Shortcut**:
+  Simply visit `https://gopal0208.github.io/frontend-lld/?admin=true` to automatically reveal the controls.
+
+---
+
+## 📄 License
+This project is open-source and available under the MIT License.

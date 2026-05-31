@@ -305,7 +305,7 @@ function App() {
             )}
 
             <a
-              href="https://github.com"
+              href="https://github.com/gopal0208/frontend-lld"
               target="_blank"
               rel="noreferrer"
               className="btn"
