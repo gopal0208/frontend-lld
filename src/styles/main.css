@@ -99,6 +99,29 @@
   gap: 0.25rem;
 }
 
+/* Custom Scrollbars for Sidebar Sections */
+.sidebar-section-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.sidebar-section-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-section-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-section-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+}
+
+.sidebar-section-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.25);
+}
+
 .sidebar-item {
   width: 100%;
   text-align: left;
@@ -147,7 +170,7 @@
 .main-content {
   z-index: 5;
   display: grid;
-  grid-template-rows: 70px 1fr;
+  grid-template-rows: auto 1fr;
   height: 100vh;
   overflow: hidden;
 }
@@ -159,12 +182,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0.75rem 2rem;
+  min-height: 70px;
+  gap: 1.5rem;
 }
 
 .header-title-section {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .header-title {
@@ -175,12 +202,18 @@
 .header-tagline {
   font-size: 0.8rem;
   color: var(--text-muted);
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+  margin-top: 0.2rem;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .content-viewer {
@@ -556,4 +589,64 @@
 .custom-thumbnail-overlay:hover .play-button-large {
   transform: scale(1.1);
   box-shadow: 0 0 35px var(--accent-purple);
+}
+
+/* Responsive Adaptive Styling for Screens (max-width: 900px) */
+@media (max-width: 900px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    height: auto;
+    max-height: 380px;
+    flex-shrink: 0;
+  }
+
+  .main-content {
+    height: auto;
+    min-height: calc(100vh - 380px);
+    grid-template-rows: auto 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .content-viewer {
+    padding: 1.25rem;
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .tabs-container {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  .study-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
 }

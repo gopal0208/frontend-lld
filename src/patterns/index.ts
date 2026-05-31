@@ -93,11 +93,50 @@ class PubSub {
 
 export default PubSub;`;
 
+const adapterCode = `interface ModernSocialSharing {
+  sharePost(message: string, mediaUrl?: string): Promise<boolean>;
+}
+
+class InstagramSharingService implements ModernSocialSharing {
+  public async sharePost(message: string, mediaUrl?: string): Promise<boolean> {
+    console.log(\`[Instagram API] Sharing message: "\${message}" with media: \${mediaUrl || 'none'}\`);
+    return true;
+  }
+}
+
+// Legacy SDK with an incompatible signature
+class LegacyTwitterSDK {
+  public publishTweet(text: string): void {
+    console.log(\`[Legacy Twitter SDK] Publishing tweet text: "\${text}"\`);
+  }
+}
+
+// Adapter class translating LegacyTwitterSDK to ModernSocialSharing interface
+class TwitterAdapter implements ModernSocialSharing {
+  private legacySDK: LegacyTwitterSDK;
+
+  constructor(legacySDK: LegacyTwitterSDK) {
+    this.legacySDK = legacySDK;
+  }
+
+  public async sharePost(message: string, mediaUrl?: string): Promise<boolean> {
+    let text = message;
+    if (mediaUrl) {
+      text += \` (Attached image: \${mediaUrl})\`;
+    }
+    this.legacySDK.publishTweet(text);
+    return true;
+  }
+}
+
+export { type ModernSocialSharing, InstagramSharingService, LegacyTwitterSDK, TwitterAdapter };`;
+
 export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
   {
     id: 'singleton-pattern',
     title: 'Singleton Pattern',
     description: "Analogy: The Earth's Moon. No matter where you stand in the world, there is only one Moon, and everyone refers to the same single object. Similarly, a Singleton guarantees a class has exactly one shared instance globally.",
+    category: 'Creational',
     frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
@@ -141,9 +180,70 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     ]
   },
   {
+    id: 'adapter-pattern',
+    title: 'Adapter Pattern',
+    description: "Analogy: A power plug adapter. If you travel to a foreign country with a different wall outlet design, your laptop plug won't fit. You use a power adapter to translate the country's outlet interface into your laptop's plug interface without modifying the laptop or the wall.",
+    category: 'Structural',
+    frameworks: ['React', 'Vanilla'],
+    diagram: `
++-------------------------------------------------------------------------+
+|                          ADAPTER PATTERN DESIGN                         |
++-------------------------------------------------------------------------+
+
+   [ Client Application ]
+             |
+      (Calls sharePost())
+             |
+             v
+   +----------------------------------------------------+
+   | <<interface>> ModernSocialSharing                  |
+   +----------------------------------------------------+
+   | + sharePost(message: string, mediaUrl?: string)    |
+   +----------------------------------------------------+
+             ^
+             | (Implements)
+             |
+   +----------------------------------------------------+
+   | TwitterAdapter (The Adapter)                       |
+   +----------------------------------------------------+
+   | - legacySDK: LegacyTwitterSDK                      |
+   +----------------------------------------------------+
+   | + sharePost(message: string, mediaUrl?: string)    | ---+
+   +----------------------------------------------------+    |
+                                                             | (Adapts to)
+                                                             v
+                                            +----------------------------------+
+                                            | LegacyTwitterSDK (The Adaptee)   |
+                                            +----------------------------------+
+                                            | + publishTweet(text: string)     |
+                                            +----------------------------------+
+`,
+    theory: {
+      intent: 'Convert the interface of a class into another interface clients expect. Adapter lets classes work together that couldn\'t otherwise because of incompatible interfaces.',
+      whenToUse: [
+        'Integrating a third-party library or legacy SDK whose API format doesn\'t match the application\'s common gateway interfaces.',
+        'Decoupling business logic from specific API frameworks by mapping client calls through generic adapters.',
+        'Refactoring multiple backend microservices connections into uniform frontend network structures.'
+      ],
+      prosAndCons: {
+        pros: [
+          'Single Responsibility Principle: Decouples the interface or data conversion code from the primary business logic.',
+          'Open/Closed Principle: You can introduce new adapters into the program without breaking existing client code.'
+        ],
+        cons: [
+          'Increases overall system complexity by introducing new interfaces and adapter wrapper classes.'
+        ]
+      }
+    },
+    codeFiles: [
+      { filename: 'adapter.ts', code: adapterCode, language: 'typescript' }
+    ]
+  },
+  {
     id: 'observer-pattern',
     title: 'Observer Pattern',
     description: 'Establishes a publisher-subscriber model where state updates notify all subscribed listeners automatically.',
+    category: 'Behavioral',
     frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
@@ -195,6 +295,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     id: 'pub-sub-pattern',
     title: 'Publish-Subscribe',
     description: 'Decoupled communication model routing events from publishers to subscribers through a central broker channel.',
+    category: 'Behavioral',
     frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+

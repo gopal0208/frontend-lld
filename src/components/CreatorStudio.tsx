@@ -16,6 +16,7 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
   const [contentType, setContentType] = useState<'pattern' | 'challenge'>('challenge');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState<'Creational' | 'Structural' | 'Behavioral'>('Creational');
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [tagsInput, setTagsInput] = useState('');
   const [frameworksInput, setFrameworksInput] = useState('React, Vanilla');
@@ -147,6 +148,7 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
         keyTakeaways: takeaways,
       };
     } else {
+      baseObject.category = category;
       baseObject.theory = {
         intent: problemStatement,
         whenToUse: bullets,
@@ -270,13 +272,17 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
               </div>
             ) : (
               <div className="playground-knob">
-                <label>Type Badge</label>
-                <input
-                  type="text"
-                  disabled
-                  value="Design Pattern"
-                  style={{ background: 'rgba(0,0,0,0.1)', border: '1px solid var(--border-color)', padding: '0.5rem', color: 'var(--text-muted)', borderRadius: 'var(--radius-sm)', cursor: 'not-allowed' }}
-                />
+                <label>Pattern Category</label>
+                <select
+                  value={category}
+                  onChange={(e: any) => setCategory(e.target.value)}
+                  className="playground-select"
+                  style={{ width: '100%' }}
+                >
+                  <option value="Creational">Creational</option>
+                  <option value="Structural">Structural</option>
+                  <option value="Behavioral">Behavioral</option>
+                </select>
               </div>
             )}
           </div>

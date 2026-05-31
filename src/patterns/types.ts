@@ -4,6 +4,7 @@ export interface LLDPattern {
   id: string;
   title: string;
   description: string;
+  category?: 'Creational' | 'Structural' | 'Behavioral';
   frameworks?: string[];
   diagram: string;
   theory: {

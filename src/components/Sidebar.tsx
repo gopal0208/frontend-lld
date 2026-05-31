@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { LLDConcept } from '../concepts/types';
 import { LLDPattern } from '../patterns/types';
-import { Search, ChevronRight, Terminal, Sparkles, Box, Code } from 'lucide-react';
+import { Search, ChevronRight, Terminal, Sparkles, Box, Layers, Zap, Code } from 'lucide-react';
 
 interface SidebarProps {
   patterns: LLDPattern[];
-  concepts: LLDConcept[];
+  concepts?: any[];
   activeId: string;
   onSelect: (id: string, type: 'pattern' | 'challenge') => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   patterns,
-  concepts,
+  concepts = [],
   activeId,
   onSelect,
 }) => {
@@ -38,8 +37,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       c &&
       matchesFramework(c) &&
       ((c.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (c.tags || []).some((tag) => tag && tag.toLowerCase().includes(searchQuery.toLowerCase())))
+        (c.tags || []).some((tag: string) => tag && tag.toLowerCase().includes(searchQuery.toLowerCase())))
   );
+
+  // Group patterns by category
+  const creationalPatterns = filteredPatterns.filter((p) => p.category === 'Creational');
+  const structuralPatterns = filteredPatterns.filter((p) => p.category === 'Structural');
+  const behavioralPatterns = filteredPatterns.filter((p) => p.category === 'Behavioral' || !p.category);
 
   const getFrameworkBadgeColor = (f: string) => {
     switch (f.toLowerCase()) {
@@ -78,6 +82,82 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const renderPatternSection = (
+    title: string,
+    items: LLDPattern[],
+    icon: React.ReactNode,
+    accentColor: string
+  ) => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+        <div className="sidebar-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', margin: '0.75rem 1.25rem 0.25rem' }}>
+          {icon}
+          <span style={{ color: accentColor }}>{title}</span>
+          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginLeft: 'auto', background: 'rgba(255,255,255,0.03)', padding: '0.05rem 0.35rem', borderRadius: '4px' }}>
+            {items.length}
+          </span>
+        </div>
+        
+        <div className="sidebar-section-list" style={{
+          maxHeight: '170px',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.25rem',
+          padding: '0 0.75rem',
+        }}>
+          {items.length === 0 ? (
+            <div style={{ padding: '0.75rem 1rem', fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+              No patterns registered
+            </div>
+          ) : (
+            items.map((p) => {
+              const isActive = p.id === activeId;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => onSelect(p.id, 'pattern')}
+                  className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  style={{
+                    padding: '0.65rem 0.8rem',
+                  }}
+                >
+                  <div className="sidebar-item-content" style={{ gap: '0.5rem' }}>
+                    <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: accentColor }} />
+                    <div>
+                      <div style={{ fontWeight: isActive ? 600 : 500, fontSize: '0.85rem' }}>{p.title}</div>
+                      {p.frameworks && p.frameworks.length > 0 && (
+                        <div style={{ display: 'flex', gap: '0.2rem', marginTop: '0.15rem', flexWrap: 'wrap' }}>
+                          {p.frameworks.map((f) => {
+                            const badge = getFrameworkBadgeColor(f);
+                            return (
+                              <span key={f} style={{
+                                fontSize: '0.58rem',
+                                padding: '0.02rem 0.2rem',
+                                borderRadius: '4px',
+                                background: badge.bg,
+                                color: badge.text,
+                                border: `1px solid ${badge.border}`,
+                                lineHeight: 1.1,
+                              }}>
+                                {f}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <ChevronRight size={12} className="sidebar-item-arrow" style={{ color: 'var(--text-muted)' }} />
+                </button>
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -107,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Search size={16} style={{ color: 'var(--text-muted)' }} />
           <input
             type="text"
-            placeholder="Search patterns or challenges..."
+            placeholder="Search learning portal..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
@@ -199,117 +279,108 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Categories */}
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        
-        {/* Category 1: Design Patterns */}
-        <div>
-          <div className="sidebar-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <Box size={12} style={{ color: 'var(--accent-purple)' }} />
-            <span>Design Patterns</span>
-          </div>
-          <div className="sidebar-menu">
-            {filteredPatterns.map((p) => {
-              const isActive = p.id === activeId;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => onSelect(p.id, 'pattern')}
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
-                >
-                  <div className="sidebar-item-content">
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-purple)' }} />
-                    <div>
-                      <div style={{ fontWeight: isActive ? 600 : 500 }}>{p.title}</div>
-                      {p.frameworks && p.frameworks.length > 0 && (
-                        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.15rem', flexWrap: 'wrap' }}>
-                          {p.frameworks.map((f) => {
-                            const badge = getFrameworkBadgeColor(f);
-                            return (
-                              <span key={f} style={{
-                                fontSize: '0.62rem',
-                                padding: '0.05rem 0.25rem',
-                                borderRadius: '4px',
-                                background: badge.bg,
-                                color: badge.text,
-                                border: `1px solid ${badge.border}`,
-                                lineHeight: 1.1,
-                              }}>
-                                {f}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <ChevronRight size={14} className="sidebar-item-arrow" style={{ color: 'var(--text-muted)' }} />
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      {/* Categories container */}
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingBottom: '1.5rem' }}>
+        {renderPatternSection(
+          'Creational Patterns',
+          creationalPatterns,
+          <Box size={12} style={{ color: 'var(--accent-purple)' }} />,
+          'var(--accent-purple)'
+        )}
 
-        {/* Category 2: LLD Challenges */}
-        <div>
-          <div className="sidebar-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        {renderPatternSection(
+          'Structural Patterns',
+          structuralPatterns,
+          <Layers size={12} style={{ color: 'var(--accent-cyan)' }} />,
+          'var(--accent-cyan)'
+        )}
+
+        {renderPatternSection(
+          'Behavioral Patterns',
+          behavioralPatterns,
+          <Zap size={12} style={{ color: '#4ade80' }} />,
+          '#4ade80'
+        )}
+
+        {/* Category 4: Design Challenges */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div className="sidebar-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', margin: '0.75rem 1.25rem 0.25rem' }}>
             <Code size={12} style={{ color: 'var(--accent-cyan)' }} />
             <span>Design Challenges</span>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginLeft: 'auto', background: 'rgba(255,255,255,0.03)', padding: '0.05rem 0.35rem', borderRadius: '4px' }}>
+              {filteredConcepts.length}
+            </span>
           </div>
-          <div className="sidebar-menu">
-            {filteredConcepts.map((c) => {
-              const isActive = c.id === activeId;
-              const diffColor =
-                c.difficulty === 'Easy'
-                  ? 'var(--success)'
-                  : c.difficulty === 'Medium'
-                  ? 'var(--warning)'
-                  : 'var(--error)';
+          
+          <div className="sidebar-section-list" style={{
+            maxHeight: '170px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.25rem',
+            padding: '0 0.75rem',
+          }}>
+            {filteredConcepts.length === 0 ? (
+              <div style={{ padding: '0.75rem 1rem', fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                No challenges registered
+              </div>
+            ) : (
+              filteredConcepts.map((c) => {
+                const isActive = c.id === activeId;
+                const diffColor =
+                  c.difficulty === 'Easy'
+                    ? 'var(--success)'
+                    : c.difficulty === 'Medium'
+                    ? 'var(--warning)'
+                    : 'var(--error)';
 
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => onSelect(c.id, 'challenge')}
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
-                >
-                  <div className="sidebar-item-content">
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: diffColor }} />
-                    <div>
-                      <div style={{ fontWeight: isActive ? 600 : 500 }}>{c.title}</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', marginTop: '0.1rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-                          {c.tags.slice(0, 2).map((t) => `#${t}`).join(' ')}
-                        </div>
-                        {c.frameworks && c.frameworks.length > 0 && (
-                          <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.05rem', flexWrap: 'wrap' }}>
-                            {c.frameworks.map((f) => {
-                              const badge = getFrameworkBadgeColor(f);
-                              return (
-                                <span key={f} style={{
-                                  fontSize: '0.62rem',
-                                  padding: '0.05rem 0.25rem',
-                                  borderRadius: '4px',
-                                  background: badge.bg,
-                                  color: badge.text,
-                                  border: `1px solid ${badge.border}`,
-                                  lineHeight: 1.1,
-                                }}>
-                                  {f}
-                                </span>
-                              );
-                            })}
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => onSelect(c.id, 'challenge')}
+                    className={`sidebar-item ${isActive ? 'active' : ''}`}
+                    style={{
+                      padding: '0.65rem 0.8rem',
+                    }}
+                  >
+                    <div className="sidebar-item-content" style={{ gap: '0.5rem' }}>
+                      <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: diffColor }} />
+                      <div>
+                        <div style={{ fontWeight: isActive ? 600 : 500, fontSize: '0.85rem' }}>{c.title}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', marginTop: '0.1rem' }}>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+                            {(c.tags || []).slice(0, 2).map((t: string) => `#${t}`).join(' ')}
                           </div>
-                        )}
+                          {c.frameworks && c.frameworks.length > 0 && (
+                            <div style={{ display: 'flex', gap: '0.2rem', marginTop: '0.05rem', flexWrap: 'wrap' }}>
+                              {c.frameworks.map((f: string) => {
+                                const badge = getFrameworkBadgeColor(f);
+                                return (
+                                  <span key={f} style={{
+                                    fontSize: '0.58rem',
+                                    padding: '0.02rem 0.2rem',
+                                    borderRadius: '4px',
+                                    background: badge.bg,
+                                    color: badge.text,
+                                    border: `1px solid ${badge.border}`,
+                                    lineHeight: 1.1,
+                                  }}>
+                                    {f}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <ChevronRight size={14} className="sidebar-item-arrow" style={{ color: 'var(--text-muted)' }} />
-                </button>
-              );
-            })}
+                    <ChevronRight size={12} className="sidebar-item-arrow" style={{ color: 'var(--text-muted)' }} />
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
-
       </div>
     </aside>
   );
