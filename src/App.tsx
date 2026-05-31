@@ -42,8 +42,7 @@ function App() {
     };
   }, []);
 
-  // Load and merge database and localStorage configurations
-  useEffect(() => {
+  const loadData = () => {
     // 1. Fetch dynamic public JSON database
     fetch('./lld_database.json')
       .then((res) => {
@@ -56,8 +55,25 @@ function App() {
           const customP = JSON.parse(localStorage.getItem('lld_hub_custom_patterns') || '[]');
           const customC = JSON.parse(localStorage.getItem('lld_hub_custom_challenges') || '[]');
           
-          setPatterns([...data.patterns, ...customP]);
-          setChallenges([...data.challenges, ...customC]);
+          const finalPatterns = [...data.patterns, ...customP];
+          const finalChallenges = [...data.challenges, ...customC];
+          setPatterns(finalPatterns);
+          setChallenges(finalChallenges);
+
+          // Update active selection if current selection is invalid
+          const allItems = [...finalPatterns, ...finalChallenges];
+          const currentItemExists = allItems.some((item) => item.id === activeId);
+          if (!currentItemExists) {
+            if (finalPatterns.length > 0) {
+              setActiveId(finalPatterns[0].id);
+              setActiveType('pattern');
+            } else if (finalChallenges.length > 0) {
+              setActiveId(finalChallenges[0].id);
+              setActiveType('challenge');
+            } else {
+              setActiveId('');
+            }
+          }
         }
       })
       .catch((err) => {
@@ -65,9 +81,30 @@ function App() {
         // Fallback: load from compiled JS files + localStorage
         const customP = JSON.parse(localStorage.getItem('lld_hub_custom_patterns') || '[]');
         const customC = JSON.parse(localStorage.getItem('lld_hub_custom_challenges') || '[]');
-        setPatterns([...LLD_PATTERNS_REGISTRY, ...customP]);
-        setChallenges([...LLD_CONCEPTS_REGISTRY, ...customC]);
+        
+        const finalPatterns = [...LLD_PATTERNS_REGISTRY, ...customP];
+        const finalChallenges = [...LLD_CONCEPTS_REGISTRY, ...customC];
+        setPatterns(finalPatterns);
+        setChallenges(finalChallenges);
+
+        const allItems = [...finalPatterns, ...finalChallenges];
+        const currentItemExists = allItems.some((item) => item.id === activeId);
+        if (!currentItemExists) {
+          if (finalPatterns.length > 0) {
+            setActiveId(finalPatterns[0].id);
+            setActiveType('pattern');
+          } else if (finalChallenges.length > 0) {
+            setActiveId(finalChallenges[0].id);
+            setActiveType('challenge');
+          } else {
+            setActiveId('');
+          }
+        }
       });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const handleSelect = (id: string, type: 'pattern' | 'challenge') => {
@@ -155,7 +192,7 @@ function App() {
         case 'pub-sub-pattern':
           return <PubSubDemo />;
         default:
-          return <DynamicDemo title={title || 'Custom Pattern'} codeFiles={codeFiles || []} />;
+          return <DynamicDemo key={activeId} title={title || 'Custom Pattern'} codeFiles={codeFiles || []} />;
       }
     } else {
       switch (activeId) {
@@ -170,7 +207,7 @@ function App() {
         case 'file-explorer':
           return <FileExplorerDemo />;
         default:
-          return <DynamicDemo title={title || 'Custom Challenge'} codeFiles={codeFiles || []} />;
+          return <DynamicDemo key={activeId} title={title || 'Custom Challenge'} codeFiles={codeFiles || []} />;
       }
     }
   };
@@ -179,11 +216,7 @@ function App() {
     if (window.confirm('Clear all custom items added to local storage?')) {
       localStorage.removeItem('lld_hub_custom_patterns');
       localStorage.removeItem('lld_hub_custom_challenges');
-      // Reload defaults
-      setPatterns(LLD_PATTERNS_REGISTRY);
-      setChallenges(LLD_CONCEPTS_REGISTRY);
-      setActiveId(LLD_PATTERNS_REGISTRY[0].id);
-      setActiveType('pattern');
+      loadData();
       alert('Custom storage cleared.');
     }
   };
