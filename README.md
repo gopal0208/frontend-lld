@@ -22,13 +22,6 @@ Real-world widget simulations showing design patterns in production code:
 * **Recursive Comments Thread**: Nested states and operations at arbitrary depth.
 * **Drag-and-Drop Kanban Board**: Custom HTML5 drag & drop implementation with column state transfers.
 * **File Explorer Directory**: Interactive folder tree structures (CRUD operations).
-
-### 3. 🛠️ Creator Studio (Developer-Only Mode)
-An interactive in-app builder deck to configure and author new studies programmatically:
-* Direct integration with the **Imgur Image Upload API** for linking structural diagrams without repo bloat.
-* Real-time validation, Base64 backup, and one-click JSON config generator.
-* Built-in support for embedding external **CodeSandbox / StackBlitz** URLs.
-
 ---
 
 ## 🛠️ Tech Stack & Directory Structure
@@ -74,25 +67,6 @@ An interactive in-app builder deck to configure and author new studies programma
    ```bash
    npm run build
    ```
-
----
-
-## 🔑 Administrative Operations & Content Authoring
-
-To prevent regular visitors from seeing developer controls, both **Creator Studio** and **Clear Storage** header buttons are hidden by default.
-
-### Enable Creator Studio
-Open the browser Developer Tools Console (`F12`) on the hosted page and run:
-* **Open the Studio Modal directly**:
-  ```javascript
-  openStudio()
-  ```
-* **Toggle persistent header buttons (Saved in LocalStorage)**:
-  ```javascript
-  enableStudio(true) // Pass false to hide again
-  ```
-* **URL Parameter Shortcut**:
-  Simply visit `https://gopal0208.github.io/frontend-lld/?admin=true` to automatically reveal the controls.
 
 ---
 
