@@ -288,19 +288,21 @@ function App() {
               </button>
             )}
             
-            <button
-              onClick={clearLocalStorageContent}
-              style={{
-                fontSize: '0.75rem',
-                padding: '0.45rem 0.8rem',
-                background: 'rgba(255,255,255,0.03)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-muted)',
-              }}
-              title="Reset sandbox"
-            >
-              Clear Storage
-            </button>
+            {isAdmin && (
+              <button
+                onClick={clearLocalStorageContent}
+                style={{
+                  fontSize: '0.75rem',
+                  padding: '0.45rem 0.8rem',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderColor: 'var(--border-color)',
+                  color: 'var(--text-muted)',
+                }}
+                title="Reset sandbox"
+              >
+                Clear Storage
+              </button>
+            )}
 
             <a
               href="https://github.com"
