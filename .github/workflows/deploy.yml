@@ -1,0 +1,34 @@
+name: Deploy LLD Hub to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Runs whenever code is pushed to main branch
+
+permissions:
+  contents: write # Needed to push built files to gh-pages branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Compile and Build App
+        run: npm run build
+
+      - name: Deploy static assets to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
