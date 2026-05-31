@@ -21,22 +21,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const matchesFramework = (item: any) => {
     if (selectedFramework === 'All') return true;
-    if (!item.frameworks) return false;
-    return item.frameworks.some((f: string) => f.toLowerCase() === selectedFramework.toLowerCase());
+    if (!item || !item.frameworks) return false;
+    return item.frameworks.some((f: string) => f && f.toLowerCase() === selectedFramework.toLowerCase());
   };
 
   const filteredPatterns = patterns.filter(
     (p) =>
+      p &&
       matchesFramework(p) &&
-      (p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      ((p.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.description || '').toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const filteredConcepts = concepts.filter(
     (c) =>
+      c &&
       matchesFramework(c) &&
-      (c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+      ((c.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (c.tags || []).some((tag) => tag && tag.toLowerCase().includes(searchQuery.toLowerCase())))
   );
 
   const getFrameworkBadgeColor = (f: string) => {

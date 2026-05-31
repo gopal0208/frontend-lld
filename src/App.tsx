@@ -35,6 +35,15 @@ function App() {
   }, []);
 
   const loadData = () => {
+    // Helper to merge lists and deduplicate by id (favoring database/custom items over static registry)
+    const mergeItems = (staticItems: any[], dbItems: any[], customItems: any[]) => {
+      const map = new Map();
+      staticItems.forEach(item => map.set(item.id, item));
+      dbItems.forEach(item => map.set(item.id, item));
+      customItems.forEach(item => map.set(item.id, item));
+      return Array.from(map.values());
+    };
+
     // 1. Fetch dynamic public JSON database
     fetch('./lld_database.json')
       .then((res) => {
@@ -43,12 +52,12 @@ function App() {
       })
       .then((data) => {
         if (data.patterns && data.challenges) {
-          // Merge custom localStorage elements on top of JSON
+          // Merge static registries, database items, and custom localStorage elements
           const customP = JSON.parse(localStorage.getItem('lld_hub_custom_patterns') || '[]');
           const customC = JSON.parse(localStorage.getItem('lld_hub_custom_challenges') || '[]');
           
-          const finalPatterns = [...data.patterns, ...customP];
-          const finalChallenges = [...data.challenges, ...customC];
+          const finalPatterns = mergeItems(LLD_PATTERNS_REGISTRY, data.patterns, customP);
+          const finalChallenges = mergeItems(LLD_CONCEPTS_REGISTRY, data.challenges, customC);
           setPatterns(finalPatterns);
           setChallenges(finalChallenges);
 

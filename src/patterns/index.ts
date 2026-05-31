@@ -97,8 +97,8 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
   {
     id: 'singleton-pattern',
     title: 'Singleton Pattern',
-    description: 'Guarantees a class has only one single active instance and provides a global access method to it.',
-    frameworks: ['Vanilla'],
+    description: "Analogy: The Earth's Moon. No matter where you stand in the world, there is only one Moon, and everyone refers to the same single object. Similarly, a Singleton guarantees a class has exactly one shared instance globally.",
+    frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                    SINGLETON UML CLASS                    |
@@ -144,7 +144,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     id: 'observer-pattern',
     title: 'Observer Pattern',
     description: 'Establishes a publisher-subscriber model where state updates notify all subscribed listeners automatically.',
-    frameworks: ['Vanilla'],
+    frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                   OBSERVER DESIGN PATTERN                 |
@@ -195,7 +195,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     id: 'pub-sub-pattern',
     title: 'Publish-Subscribe',
     description: 'Decoupled communication model routing events from publishers to subscribers through a central broker channel.',
-    frameworks: ['Vanilla'],
+    frameworks: ['React', 'Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                PUBLISH-SUBSCRIBE EVENT FLOW               |
