@@ -1,21 +1,104 @@
-import React from 'react';
 import { LLDPattern } from './types';
 
-// Interactive Sandboxes
-import { SingletonDemo } from './Singleton/SingletonDemo';
-import { ObserverDemo } from './Observer/ObserverDemo';
-import { PubSubDemo } from './PubSub/PubSubDemo';
+const singletonCode = `class LoggerSingleton {
+  private static instance: LoggerSingleton | null = null;
+  private logs: string[] = [];
 
-// Code Snippets
-import { singletonCode } from './Singleton/code';
-import { observerCode } from './Observer/code';
-import { pubSubCode } from './PubSub/code';
+  private constructor() {} // Prevents direct instantiation
+
+  public static getInstance(): LoggerSingleton {
+    if (!LoggerSingleton.instance) {
+      LoggerSingleton.instance = new LoggerSingleton();
+    }
+    return LoggerSingleton.instance;
+  }
+
+  public log(message: string): void {
+    this.logs.push(message);
+  }
+
+  public getLogs(): string[] {
+    return [...this.logs];
+  }
+}
+
+export default LoggerSingleton;`;
+
+const observerCode = `interface Observer {
+  update(data: any): void;
+}
+
+class Subject {
+  private observers: Set<Observer> = new Set();
+  private state: number = 0;
+
+  public attach(observer: Observer): void {
+    this.observers.add(observer);
+  }
+
+  public detach(observer: Observer): void {
+    this.observers.delete(observer);
+  }
+
+  public setState(state: number): void {
+    this.state = state;
+    this.notify();
+  }
+
+  public getState(): number {
+    return this.state;
+  }
+
+  private notify(): void {
+    for (const observer of this.observers) {
+      observer.update(this.state);
+    }
+  }
+}
+
+export { Subject, type Observer };`;
+
+const pubSubCode = `type Callback = (data: any) => void;
+
+class PubSub {
+  private channels: Map<string, Set<Callback>> = new Map();
+
+  public subscribe(channel: string, callback: Callback): () => void {
+    if (!this.channels.has(channel)) {
+      this.channels.set(channel, new Set());
+    }
+    this.channels.get(channel)!.add(callback);
+
+    // Return unsubscribe function
+    return () => {
+      const subscribers = this.channels.get(channel);
+      if (subscribers) {
+        subscribers.delete(callback);
+        if (subscribers.size === 0) {
+          this.channels.delete(channel);
+        }
+      }
+    };
+  }
+
+  public publish(channel: string, data: any): void {
+    const subscribers = this.channels.get(channel);
+    if (subscribers) {
+      for (const callback of subscribers) {
+        callback(data);
+      }
+    }
+  }
+}
+
+export default PubSub;`;
 
 export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
   {
     id: 'singleton-pattern',
     title: 'Singleton Pattern',
     description: 'Guarantees a class has only one single active instance and provides a global access method to it.',
+    frameworks: ['Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                    SINGLETON UML CLASS                    |
@@ -53,7 +136,6 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
         ]
       }
     },
-    demoComponent: React.createElement(SingletonDemo),
     codeFiles: [
       { filename: 'singleton.ts', code: singletonCode, language: 'typescript' }
     ]
@@ -62,6 +144,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     id: 'observer-pattern',
     title: 'Observer Pattern',
     description: 'Establishes a publisher-subscriber model where state updates notify all subscribed listeners automatically.',
+    frameworks: ['Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                   OBSERVER DESIGN PATTERN                 |
@@ -78,7 +161,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
        |  + notify(): void                           | <--- Loop & trigger updates
        +---------------------------------------------+
                              |
-                      (Many-to-One Link)
+                       (Many-to-One Link)
                              v
        +---------------------------------------------+
        |             Observer (Subscriber)           |
@@ -104,7 +187,6 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
         ]
       }
     },
-    demoComponent: React.createElement(ObserverDemo),
     codeFiles: [
       { filename: 'observer.ts', code: observerCode, language: 'typescript' }
     ]
@@ -113,6 +195,7 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
     id: 'pub-sub-pattern',
     title: 'Publish-Subscribe',
     description: 'Decoupled communication model routing events from publishers to subscribers through a central broker channel.',
+    frameworks: ['Vanilla'],
     diagram: `
 +-----------------------------------------------------------+
 |                PUBLISH-SUBSCRIBE EVENT FLOW               |
@@ -149,7 +232,6 @@ export const LLD_PATTERNS_REGISTRY: LLDPattern[] = [
         ]
       }
     },
-    demoComponent: React.createElement(PubSubDemo),
     codeFiles: [
       { filename: 'pubsub.ts', code: pubSubCode, language: 'typescript' }
     ]

@@ -18,6 +18,7 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
   const [description, setDescription] = useState('');
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [tagsInput, setTagsInput] = useState('');
+  const [frameworksInput, setFrameworksInput] = useState('React, Vanilla');
   const [videoUrl, setVideoUrl] = useState('');
   const [codeSandboxUrl, setCodeSandboxUrl] = useState('');
   const [diagram, setDiagram] = useState('');
@@ -120,6 +121,7 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
 
   const generateJson = () => {
     const tags = tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
+    const frameworks = frameworksInput.split(',').map((f) => f.trim()).filter(Boolean);
     const bullets = bulletsInput.split('\n').map((t) => t.trim()).filter(Boolean);
     const patternsUsed = patternsInput.split('\n').map((t) => t.trim()).filter(Boolean);
     const takeaways = takeawaysInput.split('\n').map((t) => t.trim()).filter(Boolean);
@@ -128,6 +130,7 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
       id: title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
       title,
       description,
+      frameworks,
       diagram: diagram || '\n+--------------------------+\n|      SYSTEM DIAGRAM      |\n+--------------------------+\n',
       codeFiles,
       codeSandboxUrl: codeSandboxUrl.trim() || undefined,
@@ -286,6 +289,17 @@ export const CreatorStudio: React.FC<CreatorStudioProps> = ({ onSave, onClose })
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', padding: '0.5rem', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', resize: 'vertical', outline: 'none' }}
+            />
+          </div>
+
+          <div className="playground-knob">
+            <label>Supported Frameworks (Comma-separated)</label>
+            <input
+              type="text"
+              placeholder="e.g., React, Vanilla, Angular, Vue"
+              value={frameworksInput}
+              onChange={(e) => setFrameworksInput(e.target.value)}
+              style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', padding: '0.5rem', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', outline: 'none' }}
             />
           </div>
 

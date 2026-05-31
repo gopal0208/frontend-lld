@@ -6,6 +6,7 @@ export interface LLDConcept {
   description: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   tags: string[];
+  frameworks?: string[];
   media?: {
     type: 'youtube' | 'local' | 'none';
     url: string;
@@ -18,7 +19,6 @@ export interface LLDConcept {
     designPatterns: string[];
     keyTakeaways: string[];
   };
-  demoComponent: ReactNode; // The interactive demo
   codeFiles: {
     filename: string;
     code: string;

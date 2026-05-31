@@ -4,6 +4,7 @@ export interface LLDPattern {
   id: string;
   title: string;
   description: string;
+  frameworks?: string[];
   diagram: string;
   theory: {
     intent: string;
@@ -13,7 +14,6 @@ export interface LLDPattern {
       cons: string[];
     };
   };
-  demoComponent: ReactNode;
   codeFiles: {
     filename: string;
     code: string;

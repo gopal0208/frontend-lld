@@ -7,15 +7,7 @@ import { CodeViewer } from './components/CodeViewer';
 import { CreatorStudio } from './components/CreatorStudio';
 import { DynamicDemo } from './components/DynamicDemo';
 
-// Built-in custom playgrounds maps
-import { AutocompleteDemo } from './concepts/Autocomplete/AutocompleteDemo';
-import { ToastDemo } from './concepts/ToastManager/ToastDemo';
-import { CommentDemo } from './concepts/NestedComments/CommentDemo';
-import { KanbanDemo } from './concepts/KanbanBoard/KanbanDemo';
-import { FileExplorerDemo } from './concepts/FileExplorer/FileExplorerDemo';
-import { SingletonDemo } from './patterns/Singleton/SingletonDemo';
-import { ObserverDemo } from './patterns/Observer/ObserverDemo';
-import { PubSubDemo } from './patterns/PubSub/PubSubDemo';
+
 
 import { BookOpen, PlayCircle, GraduationCap, Layers, Cpu, Award, BookOpenCheck, CheckCircle2, AlertOctagon, Sparkles } from 'lucide-react';
 
@@ -159,6 +151,43 @@ function App() {
     }
   };
 
+  const getFrameworkBadgeColor = (f: string) => {
+    switch (f.toLowerCase()) {
+      case 'react':
+        return {
+          bg: 'rgba(6, 182, 212, 0.08)',
+          border: 'rgba(6, 182, 212, 0.25)',
+          text: '#22d3ee',
+        };
+      case 'angular':
+        return {
+          bg: 'rgba(239, 68, 68, 0.08)',
+          border: 'rgba(239, 68, 68, 0.25)',
+          text: '#f87171',
+        };
+      case 'vue':
+        return {
+          bg: 'rgba(34, 197, 94, 0.08)',
+          border: 'rgba(34, 197, 94, 0.25)',
+          text: '#4ade80',
+        };
+      case 'vanilla':
+      case 'vanilla js':
+      case 'vanillajs':
+        return {
+          bg: 'rgba(234, 179, 8, 0.08)',
+          border: 'rgba(234, 179, 8, 0.25)',
+          text: '#facc15',
+        };
+      default:
+        return {
+          bg: 'rgba(255, 255, 255, 0.04)',
+          border: 'rgba(255, 255, 255, 0.08)',
+          text: 'var(--text-secondary)',
+        };
+    }
+  };
+
   // Resolve headers and metadata based on selection type
   const title = activeType === 'pattern' ? activePattern?.title : activeChallenge?.title;
   const description = activeType === 'pattern' ? activePattern?.description : activeChallenge?.description;
@@ -183,33 +212,7 @@ function App() {
       );
     }
 
-    if (activeType === 'pattern') {
-      switch (activeId) {
-        case 'singleton-pattern':
-          return <SingletonDemo />;
-        case 'observer-pattern':
-          return <ObserverDemo />;
-        case 'pub-sub-pattern':
-          return <PubSubDemo />;
-        default:
-          return <DynamicDemo key={activeId} title={title || 'Custom Pattern'} codeFiles={codeFiles || []} />;
-      }
-    } else {
-      switch (activeId) {
-        case 'autocomplete':
-          return <AutocompleteDemo />;
-        case 'toast-manager':
-          return <ToastDemo />;
-        case 'nested-comments':
-          return <CommentDemo />;
-        case 'kanban-board':
-          return <KanbanDemo />;
-        case 'file-explorer':
-          return <FileExplorerDemo />;
-        default:
-          return <DynamicDemo key={activeId} title={title || 'Custom Challenge'} codeFiles={codeFiles || []} />;
-      }
-    }
+    return <DynamicDemo key={activeId} title={title || (activeType === 'pattern' ? 'Custom Pattern' : 'Custom Challenge')} codeFiles={codeFiles || []} />;
   };
 
   const clearLocalStorageContent = () => {
@@ -242,7 +245,7 @@ function App() {
         {/* Header */}
         <header className="header">
           <div className="header-title-section">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <h2 className="header-title">{title}</h2>
               {activeType === 'challenge' && activeChallenge && (
                 <span
@@ -272,6 +275,25 @@ function App() {
                   Design Pattern
                 </span>
               )}
+              {((activeType === 'pattern' ? activePattern?.frameworks : activeChallenge?.frameworks) || []).map((f: string) => {
+                const badge = getFrameworkBadgeColor(f);
+                return (
+                  <span
+                    key={f}
+                    style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: 'var(--radius-full)',
+                      backgroundColor: badge.bg,
+                      color: badge.text,
+                      border: `1px solid ${badge.border}`,
+                    }}
+                  >
+                    {f}
+                  </span>
+                );
+              })}
             </div>
             <p className="header-tagline">{description}</p>
           </div>
