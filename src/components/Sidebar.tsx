@@ -143,17 +143,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
       </div>
-
-      <div style={{
-        padding: '1.25rem',
-        borderTop: '1px solid var(--border-color)',
-        fontSize: '0.75rem',
-        color: 'var(--text-muted)',
-        textAlign: 'center',
-        background: 'rgba(0,0,0,0.1)',
-      }}>
-        Designed for GitHub Hosting
-      </div>
     </aside>
   );
 };
